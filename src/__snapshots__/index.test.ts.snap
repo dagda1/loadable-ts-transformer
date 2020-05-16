@@ -1,5 +1,37 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`transformer Magic comment should remove only needed comments 1`] = `
+"const load = /* #__LOADABLE__ */ /* IMPORTANT! */ () => import('moment');
+"
+`;
+
+exports[`transformer Magic comment should transpile arrow functions 1`] = `
+"const load = /* #__LOADABLE__ */ () => import('moment');
+"
+`;
+
+exports[`transformer Magic comment should transpile function expression 1`] = `
+"const load = /* #__LOADABLE__ */ function () {
+    return import('moment');
+};
+"
+`;
+
+exports[`transformer Magic comment should transpile shortand properties 1`] = `
+"const obj = {
+    /* #__LOADABLE__ */
+    load() {
+        return import('moment');
+    }
+};
+"
+`;
+
+exports[`transformer loadable.lib should be transpiled too 1`] = `
+"loadable.lib(() => import('moment'));
+"
+`;
+
 exports[`transformer simple import in a complex promise should work 1`] = `
 "function __loadable_isReady__(self, props) {
   if (typeof __webpack_modules__ !== \\"undefined\\") {

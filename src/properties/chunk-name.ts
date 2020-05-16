@@ -1,5 +1,5 @@
 import vm from 'vm';
-import ts from 'typescript';
+import ts, { TemplateSpan } from 'typescript';
 import { getImportArg, getLeadingComments, removeMatchingLeadingComments, createObjectMethod } from '../util';
 import { CreatePropertyOptions } from './types';
 
@@ -50,20 +50,35 @@ function moduleToChunk(str: string) {
     .replace(WEBPACK_MATCH_PADDED_HYPHENS_REPLACE_REGEX, '');
 }
 
+function replaceTemplateSpan(str: string, stripLeftHyphen: boolean) {
+  if (!str) {
+    return '';
+  }
+
+  const result = str.replace(WEBPACK_PATH_NAME_NORMALIZE_REPLACE_REGEX, '-');
+  if (!stripLeftHyphen) {
+    return result;
+  }
+
+  return result.replace(MATCH_LEFT_HYPHENS_REPLACE_REGEX, '');
+}
+
+function transformTemplateSpan(span: TemplateSpan, first: boolean, single: boolean) {
+  const chunkName = ts.createStringLiteral(
+    single ? moduleToChunk(span.getFullText()) : replaceTemplateSpan(span.getFullText(), first),
+  );
+  return ts.createTemplateSpan(chunkName, span.literal);
+}
+
 function generateChunkNameNode(callPath: ts.CallExpression): ts.Expression {
   const importArg = getImportArg(callPath);
+
   if (ts.isTemplateExpression(importArg)) {
-    throw new Error('not implementd');
-    // return t.templateLiteral(
-    //   importArg.node.quasis.map((quasi, index) =>
-    //     transformQuasi(
-    //       quasi,
-    //       index === 0,
-    //       importArg.node.quasis.length === 1,
-    //     ),
-    //   ),
-    //   importArg.node.expressions,
-    // )
+    const templateSpans = importArg.templateSpans.map((span, index) =>
+      transformTemplateSpan(span, index === 0, importArg.templateSpans.length === 1),
+    );
+
+    return ts.createTemplateExpression(importArg.head, templateSpans);
   } else if (ts.isStringLiteral(importArg) || ts.isNoSubstitutionTemplateLiteral(importArg)) {
     return ts.createStringLiteral(moduleToChunk(importArg.text));
   }
