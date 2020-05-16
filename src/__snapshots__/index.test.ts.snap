@@ -27,6 +27,171 @@ exports[`transformer Magic comment should transpile shortand properties 1`] = `
 "
 `;
 
+exports[`transformer aggressive import should work with destructuration 1`] = `
+"function __loadable_isReady__(self, props) {
+  if (typeof __webpack_modules__ !== \\"undefined\\") {
+    return !!__webpack_modules__[self.resolve(props)];
+  }
+  
+  return false;
+}
+function __loadable_requireSync__(self, props) {
+  var id = self.resolve(props);
+  if (typeof __webpack_require__ !== 'undefined') {
+    return __webpack_require__(id);
+  }
+  return eval('module.require')(id);
+}
+loadable({
+    chunkName() {
+        return \`./\${\\"foo\\"}\`;
+    },
+    isReady(props) {
+        return __loadable_isReady__(this, props);
+    },
+    requireAsync: ({ foo }) => import(/* webpackChunkName: \\"\\" */ \`./\${foo}\`),
+    requireSync(props) {
+        return __loadable_requireSync__(this, props);
+    },
+    resolve() {
+        return require.resolveWeak ? require.resolveWeak(/* webpackChunkName: \\"\\" */ \`./\${foo}\`) : eval(\\"require.resolve\\")(/* webpackChunkName: \\"\\" */ \`./\${foo}\`);
+    }
+});
+"
+`;
+
+exports[`transformer aggressive import with "webpackChunkName" should replace it 1`] = `
+"function __loadable_isReady__(self, props) {
+  if (typeof __webpack_modules__ !== \\"undefined\\") {
+    return !!__webpack_modules__[self.resolve(props)];
+  }
+  
+  return false;
+}
+function __loadable_requireSync__(self, props) {
+  var id = self.resolve(props);
+  if (typeof __webpack_require__ !== 'undefined') {
+    return __webpack_require__(id);
+  }
+  return eval('module.require')(id);
+}
+loadable({
+    chunkName() {
+        return \`./\${\\"props-foo\\"}\`;
+    },
+    isReady(props) {
+        return __loadable_isReady__(this, props);
+    },
+    requireAsync: props => import(/* webpackChunkName: \\"\\" */ \`./\${props.foo}\`),
+    requireSync(props) {
+        return __loadable_requireSync__(this, props);
+    },
+    resolve() {
+        return require.resolveWeak ? require.resolveWeak(/* webpackChunkName: \\"\\" */ \`./\${props.foo}\`) : eval(\\"require.resolve\\")(/* webpackChunkName: \\"\\" */ \`./\${props.foo}\`);
+    }
+});
+"
+`;
+
+exports[`transformer aggressive import without "webpackChunkName" should support complex request 1`] = `
+"function __loadable_isReady__(self, props) {
+  if (typeof __webpack_modules__ !== \\"undefined\\") {
+    return !!__webpack_modules__[self.resolve(props)];
+  }
+  
+  return false;
+}
+function __loadable_requireSync__(self, props) {
+  var id = self.resolve(props);
+  if (typeof __webpack_require__ !== 'undefined') {
+    return __webpack_require__(id);
+  }
+  return eval('module.require')(id);
+}
+loadable({
+    chunkName() {
+        return \`./dir/\${\\"props-foo-test\\"}/test\`;
+    },
+    isReady(props) {
+        return __loadable_isReady__(this, props);
+    },
+    requireAsync: props => import(/* webpackChunkName: \\"\\" */ \`./dir/\${props.foo}/test\`),
+    requireSync(props) {
+        return __loadable_requireSync__(this, props);
+    },
+    resolve() {
+        return require.resolveWeak ? require.resolveWeak(/* webpackChunkName: \\"\\" */ \`./dir/\${props.foo}/test\`) : eval(\\"require.resolve\\")(/* webpackChunkName: \\"\\" */ \`./dir/\${props.foo}/test\`);
+    }
+});
+"
+`;
+
+exports[`transformer aggressive import without "webpackChunkName" should support destructuring 1`] = `
+"function __loadable_isReady__(self, props) {
+  if (typeof __webpack_modules__ !== \\"undefined\\") {
+    return !!__webpack_modules__[self.resolve(props)];
+  }
+  
+  return false;
+}
+function __loadable_requireSync__(self, props) {
+  var id = self.resolve(props);
+  if (typeof __webpack_require__ !== 'undefined') {
+    return __webpack_require__(id);
+  }
+  return eval('module.require')(id);
+}
+loadable({
+    chunkName() {
+        return \`./dir/\${\\"foo-test\\"}/test\`;
+    },
+    isReady(props) {
+        return __loadable_isReady__(this, props);
+    },
+    requireAsync: ({ foo }) => import(/* webpackChunkName: \\"\\" */ \`./dir/\${foo}/test\`),
+    requireSync(props) {
+        return __loadable_requireSync__(this, props);
+    },
+    resolve() {
+        return require.resolveWeak ? require.resolveWeak(/* webpackChunkName: \\"\\" */ \`./dir/\${foo}/test\`) : eval(\\"require.resolve\\")(/* webpackChunkName: \\"\\" */ \`./dir/\${foo}/test\`);
+    }
+});
+"
+`;
+
+exports[`transformer aggressive import without "webpackChunkName" should support simple request 1`] = `
+"function __loadable_isReady__(self, props) {
+  if (typeof __webpack_modules__ !== \\"undefined\\") {
+    return !!__webpack_modules__[self.resolve(props)];
+  }
+  
+  return false;
+}
+function __loadable_requireSync__(self, props) {
+  var id = self.resolve(props);
+  if (typeof __webpack_require__ !== 'undefined') {
+    return __webpack_require__(id);
+  }
+  return eval('module.require')(id);
+}
+loadable({
+    chunkName() {
+        return \`./\${\\"props-foo\\"}\`;
+    },
+    isReady(props) {
+        return __loadable_isReady__(this, props);
+    },
+    requireAsync: props => import(/* webpackChunkName: \\"\\" */ \`./\${props.foo}\`),
+    requireSync(props) {
+        return __loadable_requireSync__(this, props);
+    },
+    resolve() {
+        return require.resolveWeak ? require.resolveWeak(/* webpackChunkName: \\"\\" */ \`./\${props.foo}\`) : eval(\\"require.resolve\\")(/* webpackChunkName: \\"\\" */ \`./\${props.foo}\`);
+    }
+});
+"
+`;
+
 exports[`transformer loadable.lib should be transpiled too 1`] = `
 "loadable.lib(() => import('moment'));
 "

@@ -1,5 +1,5 @@
 import vm from 'vm';
-import ts, { TemplateSpan } from 'typescript';
+import ts, { TemplateSpan, TemplateLiteral, TemplateExpression } from 'typescript';
 import { getImportArg, getLeadingComments, removeMatchingLeadingComments, createObjectMethod } from '../util';
 import { CreatePropertyOptions } from './types';
 
@@ -109,6 +109,28 @@ function addOrReplaceChunkNameComment(callNode: ts.CallExpression, ctx: ts.Trans
   );
 }
 
+function chunkNameFromTemplateExpression(node: TemplateExpression) {
+  const [q1] = node.templateSpans;
+  const v1 = q1.getText();
+  if (!node.templateSpans.length) {
+    return v1;
+  }
+  return `${v1}[request]`;
+}
+
+function sanitizeChunkNameTemplateExpression(chunkName: string) {
+  return ts.createCall(
+    ts.createPropertyAccess(
+      ts.createTemplateExpression(ts.createTemplateHead('', ''), [
+        ts.createTemplateSpan(ts.createIdentifier(chunkName), ts.createTemplateTail('', '')),
+      ]),
+      ts.createIdentifier('replace'),
+    ),
+    undefined,
+    [ts.createRegularExpressionLiteral(WEBPACK_PATH_NAME_NORMALIZE_REPLACE_REGEX.source), ts.createStringLiteral('-')],
+  );
+}
+
 function replaceChunkName({ callNode, ctx }: CreatePropertyOptions) {
   const agressiveImport = isAgressiveImport(callNode);
   const values = getExistingChunkNameComment(callNode);
@@ -121,14 +143,11 @@ function replaceChunkName({ callNode, ctx }: CreatePropertyOptions) {
   let chunkNameNode = generateChunkNameNode(callNode);
   let webpackChunkName: string;
 
-  // if (t.isTemplateLiteral(chunkNameNode)) {
-  //   webpackChunkName = chunkNameFromTemplateLiteral(chunkNameNode)
-  //   chunkNameNode = sanitizeChunkNameTemplateLiteral(chunkNameNode)
-  // } else {
-  if (ts.isStringLiteral(chunkNameNode) || ts.isNoSubstitutionTemplateLiteral(chunkNameNode)) {
-    webpackChunkName = chunkNameNode.text;
+  if (ts.isTemplateExpression(chunkNameNode)) {
+    webpackChunkName = chunkNameFromTemplateExpression(chunkNameNode);
+    chunkNameNode = sanitizeChunkNameTemplateExpression(webpackChunkName);
   } else {
-    webpackChunkName = '';
+    webpackChunkName = chunkNameNode.getText();
   }
 
   addOrReplaceChunkNameComment(callNode, ctx, { webpackChunkName });

@@ -87,10 +87,10 @@ describe('transformer', () => {
     });
   });
 
-  describe.only('aggressive import', () => {
-    it.only('should work with destructuration', () => {
+  describe('aggressive import', () => {
+    it('should work with destructuration', () => {
       const result = testPlugin(`
-        loadable(({ foo }) => import(/* webpackChunkName: "Pages" */ \`./\${foo}\`))
+          
       `);
       expect(result).toMatchSnapshot();
     });
