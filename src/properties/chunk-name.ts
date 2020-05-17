@@ -119,10 +119,12 @@ function chunkNameFromTemplateExpression(node: TemplateExpression) {
 }
 
 function sanitizeChunkNameTemplateExpression(node: TemplateExpression) {
+  const identifier: string = (node.templateSpans[0].expression as any).text;
+
   return ts.createCall(
     ts.createPropertyAccess(
       ts.createTemplateExpression(ts.createTemplateHead(''), [
-        ts.createTemplateSpan(ts.createIdentifier('foo'), ts.createTemplateTail('')),
+        ts.createTemplateSpan(ts.createIdentifier(identifier), ts.createTemplateTail('')),
       ]),
       ts.createIdentifier('replace'),
     ),
