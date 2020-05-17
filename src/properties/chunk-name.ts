@@ -111,18 +111,18 @@ function addOrReplaceChunkNameComment(callNode: ts.CallExpression, ctx: ts.Trans
 
 function chunkNameFromTemplateExpression(node: TemplateExpression) {
   const [q1] = node.templateSpans;
-  const v1 = q1.getText();
+  const v1 = q1.literal.text;
   if (!node.templateSpans.length) {
     return v1;
   }
   return `${v1}[request]`;
 }
 
-function sanitizeChunkNameTemplateExpression(chunkName: string) {
+function sanitizeChunkNameTemplateExpression(node: TemplateExpression) {
   return ts.createCall(
     ts.createPropertyAccess(
-      ts.createTemplateExpression(ts.createTemplateHead('', ''), [
-        ts.createTemplateSpan(ts.createIdentifier(chunkName), ts.createTemplateTail('', '')),
+      ts.createTemplateExpression(ts.createTemplateHead(''), [
+        ts.createTemplateSpan(ts.createIdentifier('foo'), ts.createTemplateTail('')),
       ]),
       ts.createIdentifier('replace'),
     ),
@@ -145,9 +145,11 @@ function replaceChunkName({ callNode, ctx }: CreatePropertyOptions) {
 
   if (ts.isTemplateExpression(chunkNameNode)) {
     webpackChunkName = chunkNameFromTemplateExpression(chunkNameNode);
-    chunkNameNode = sanitizeChunkNameTemplateExpression(webpackChunkName);
+    chunkNameNode = sanitizeChunkNameTemplateExpression(chunkNameNode);
+  } else if (ts.isStringLiteral(chunkNameNode) || ts.isNoSubstitutionTemplateLiteral(chunkNameNode)) {
+    webpackChunkName = chunkNameNode.text;
   } else {
-    webpackChunkName = chunkNameNode.getText();
+    webpackChunkName = '';
   }
 
   addOrReplaceChunkNameComment(callNode, ctx, { webpackChunkName });
@@ -155,5 +157,8 @@ function replaceChunkName({ callNode, ctx }: CreatePropertyOptions) {
 }
 
 export default function chunkNameProperty(options: CreatePropertyOptions) {
-  return createObjectMethod('chunkName', [], ts.createBlock([ts.createReturn(replaceChunkName(options))], true));
+  const chunkNameExpression = replaceChunkName(options);
+  const args = options.funcNode.parameters.map(p => p.getFullText());
+
+  return createObjectMethod('chunkName', args, ts.createBlock([ts.createReturn(chunkNameExpression)], true));
 }

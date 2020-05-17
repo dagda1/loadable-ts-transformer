@@ -90,7 +90,7 @@ describe('transformer', () => {
   describe('aggressive import', () => {
     it('should work with destructuration', () => {
       const result = testPlugin(`
-          
+        loadable(({ foo }) => import(/* webpackChunkName: "Pages" */ \`./\${foo}\`))
       `);
       expect(result).toMatchSnapshot();
     });
