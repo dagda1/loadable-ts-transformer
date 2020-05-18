@@ -2,6 +2,11 @@ import ts from 'typescript';
 import { createObjectMethod, emitGlobalFunction } from '../util';
 
 const isReadyFunctionTemplate = `function __loadable_isReady__(self, props) {
+  const key=self.resolve(props)
+  if (self.resolved[key] !== true) {
+    return false
+  }
+
   if (typeof __webpack_modules__ !== "undefined") {
     return !!__webpack_modules__[self.resolve(props)];
   }

@@ -4,7 +4,7 @@ import path from "path";
 import { ChunkExtractor } from "@loadable/server";
 import express from "express";
 
-import { renderToString, renderToStaticMarkup } from "react-dom/server";
+import { renderToString } from "react-dom/server";
 import { StaticRouter } from "react-router-dom";
 import Routes from "./routes";
 

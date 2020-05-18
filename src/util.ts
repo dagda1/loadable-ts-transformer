@@ -9,7 +9,7 @@ export function createObjectMethod(name: string, args: string[], block: ts.Block
     [],
     [],
     undefined,
-    name,
+    ts.createIdentifier(name),
     undefined,
     [],
     args.map(name => ts.createParameter(undefined, undefined, undefined, name)),
@@ -19,18 +19,20 @@ export function createObjectMethod(name: string, args: string[], block: ts.Block
 }
 
 function visitEachLeadingComments(node: ts.Node, cb: (comment: ts.CommentRange & { text: string }) => void | boolean) {
-  const src = node.getSourceFile();
   // const text = src.getFullText();
   const text = node.getFullText();
   const ranges = ts.getLeadingCommentRanges(text, 0);
-  if (!ranges) return [] as string[];
-  const ret: string[] = [];
+  if (!ranges) {
+    return [] as string[];
+  }
   for (const range of ranges) {
     const comment = {
       ...range,
       text: text.slice(range.pos, range.end),
     };
-    if (cb(comment) === false) break;
+    if (cb(comment) === false) {
+      break;
+    }
   }
   return node;
 }
@@ -40,7 +42,7 @@ export function getLeadingComments(node: ts.Node) {
   visitEachLeadingComments(node, comment => {
     if (comment.kind === ts.SyntaxKind.SingleLineCommentTrivia) {
       ret.push(comment.text.slice(2));
-    } else if (comment.kind == ts.SyntaxKind.MultiLineCommentTrivia) {
+    } else if (comment.kind === ts.SyntaxKind.MultiLineCommentTrivia) {
       ret.push(comment.text.slice(2, comment.text.length - 2));
     }
   });

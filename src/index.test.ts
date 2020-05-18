@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-focused-tests */
 import ts from 'typescript';
 import { loadableTransformer } from './';
 
@@ -14,9 +15,9 @@ function testPlugin(source: string) {
   }).outputText;
 }
 
-describe('transformer', () => {
+describe.only('transformer', () => {
   describe('simple import', () => {
-    it('should work with template literal', () => {
+    it.only('should work with template literal', () => {
       const result = testPlugin(`
         loadable(() => import(\`./ModA\`))
       `);

@@ -1,5 +1,5 @@
 import vm from 'vm';
-import ts, { TemplateSpan, TemplateLiteral, TemplateExpression } from 'typescript';
+import ts, { TemplateSpan, TemplateExpression } from 'typescript';
 import { getImportArg, getLeadingComments, removeMatchingLeadingComments, createObjectMethod } from '../util';
 import { CreatePropertyOptions } from './types';
 
@@ -32,18 +32,24 @@ function writeWebpackCommentValues(values: any) {
 
 function getChunkNameComment(importArg: ts.Node) {
   const comments = getLeadingComments(importArg);
-  if (!comments.length) return null;
+  if (!comments.length) {
+    return null;
+  }
   return comments.find(comment => WEBPACK_CHUNK_NAME_REGEXP.test(comment));
 }
 
 function getRawChunkNameFromCommments(importArg: ts.Node) {
   const chunkNameComment = getChunkNameComment(importArg);
-  if (!chunkNameComment) return null;
+  if (!chunkNameComment) {
+    return null;
+  }
   return readWebpackCommentValues(chunkNameComment);
 }
 
 function moduleToChunk(str: string) {
-  if (typeof str !== 'string') return '';
+  if (typeof str !== 'string') {
+    return '';
+  }
   return str
     .replace(JS_PATH_REGEXP, '')
     .replace(WEBPACK_PATH_NAME_NORMALIZE_REPLACE_REGEX, '-')
