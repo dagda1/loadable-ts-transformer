@@ -49,8 +49,6 @@ function collectImports(loadableCallExpressionNode: ts.CallExpression, ctx: ts.T
 
 function getFuncNode(loadableCallExpressionNode: ts.Node): ts.FunctionExpression | ts.ArrowFunction | undefined {
   if (!ts.isCallExpression(loadableCallExpressionNode)) {
-    console.log(loadableCallExpressionNode.getFullText());
-    console.log(ts.isObjectLiteralExpression(loadableCallExpressionNode));
     return;
   }
 
@@ -79,8 +77,6 @@ export function loadableTransformer(ctx: ts.TransformationContext) {
 
     // Collect dynamic import call expressions such as `import('./foo')`
     const imports = collectImports(node, ctx);
-
-    console.log(imports.length);
 
     // Ignore loadable function that does not have any "import" call
     if (imports.length === 0) {
