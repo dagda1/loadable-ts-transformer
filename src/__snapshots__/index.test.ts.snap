@@ -39,6 +39,14 @@ exports[`transformer aggressive import should work with destructuration 1`] = `
   
   return false;
 }
+function __loadable_requireAsyncSync__(self, props) {
+  const key = self.resolve(props)
+  self.resolved[key] = false
+  return self.importAsync(props).then(resolved => {
+   self.resolved[key] = true
+   return resolved;
+  });       
+}
 function __loadable_requireSync__(self, props) {
   var id = self.resolve(props);
   if (typeof __webpack_require__ !== 'undefined') {
@@ -53,12 +61,17 @@ loadable({
     isReady(props) {
         return __loadable_isReady__(this, props);
     },
-    requireAsync: ({ foo }) => import(/* webpackChunkName: \\"[request]\\" */ \`./\${foo}\`),
+    requireAsync(props) {
+        return __loadable_requireAsyncSync__(this, props);
+    },
     requireSync(props) {
         return __loadable_requireSync__(this, props);
     },
-    resolve() {
-        return require.resolveWeak ? require.resolveWeak(/* webpackChunkName: \\"[request]\\" */ \`./\${foo}\`) : eval(\\"require.resolve\\")(/* webpackChunkName: \\"[request]\\" */ \`./\${foo}\`);
+    resolve({ foo }) {
+        if (require.resolveWeak) {
+            return require.resolveWeak(/* webpackChunkName: \\"[request]\\" */ \`./\${foo}\`);
+        }
+        return eval(\\"require.resolve\\")(/* webpackChunkName: \\"[request]\\" */ \`./\${foo}\`);
     }
 });
 "
@@ -76,6 +89,14 @@ exports[`transformer aggressive import with "webpackChunkName" should replace it
   
   return false;
 }
+function __loadable_requireAsyncSync__(self, props) {
+  const key = self.resolve(props)
+  self.resolved[key] = false
+  return self.importAsync(props).then(resolved => {
+   self.resolved[key] = true
+   return resolved;
+  });       
+}
 function __loadable_requireSync__(self, props) {
   var id = self.resolve(props);
   if (typeof __webpack_require__ !== 'undefined') {
@@ -90,12 +111,17 @@ loadable({
     isReady(props) {
         return __loadable_isReady__(this, props);
     },
-    requireAsync: props => import(/* webpackChunkName: \\"[request]\\" */ \`./\${props.foo}\`),
+    requireAsync(props) {
+        return __loadable_requireAsyncSync__(this, props);
+    },
     requireSync(props) {
         return __loadable_requireSync__(this, props);
     },
-    resolve() {
-        return require.resolveWeak ? require.resolveWeak(/* webpackChunkName: \\"[request]\\" */ \`./\${props.foo}\`) : eval(\\"require.resolve\\")(/* webpackChunkName: \\"[request]\\" */ \`./\${props.foo}\`);
+    resolve(props) {
+        if (require.resolveWeak) {
+            return require.resolveWeak(/* webpackChunkName: \\"[request]\\" */ \`./\${props.foo}\`);
+        }
+        return eval(\\"require.resolve\\")(/* webpackChunkName: \\"[request]\\" */ \`./\${props.foo}\`);
     }
 });
 "
@@ -113,6 +139,14 @@ exports[`transformer aggressive import without "webpackChunkName" should support
   
   return false;
 }
+function __loadable_requireAsyncSync__(self, props) {
+  const key = self.resolve(props)
+  self.resolved[key] = false
+  return self.importAsync(props).then(resolved => {
+   self.resolved[key] = true
+   return resolved;
+  });       
+}
 function __loadable_requireSync__(self, props) {
   var id = self.resolve(props);
   if (typeof __webpack_require__ !== 'undefined') {
@@ -127,12 +161,17 @@ loadable({
     isReady(props) {
         return __loadable_isReady__(this, props);
     },
-    requireAsync: props => import(/* webpackChunkName: \\"/test[request]\\" */ \`./dir/\${props.foo}/test\`),
+    requireAsync(props) {
+        return __loadable_requireAsyncSync__(this, props);
+    },
     requireSync(props) {
         return __loadable_requireSync__(this, props);
     },
-    resolve() {
-        return require.resolveWeak ? require.resolveWeak(/* webpackChunkName: \\"/test[request]\\" */ \`./dir/\${props.foo}/test\`) : eval(\\"require.resolve\\")(/* webpackChunkName: \\"/test[request]\\" */ \`./dir/\${props.foo}/test\`);
+    resolve(props) {
+        if (require.resolveWeak) {
+            return require.resolveWeak(/* webpackChunkName: \\"/test[request]\\" */ \`./dir/\${props.foo}/test\`);
+        }
+        return eval(\\"require.resolve\\")(/* webpackChunkName: \\"/test[request]\\" */ \`./dir/\${props.foo}/test\`);
     }
 });
 "
@@ -150,6 +189,14 @@ exports[`transformer aggressive import without "webpackChunkName" should support
   
   return false;
 }
+function __loadable_requireAsyncSync__(self, props) {
+  const key = self.resolve(props)
+  self.resolved[key] = false
+  return self.importAsync(props).then(resolved => {
+   self.resolved[key] = true
+   return resolved;
+  });       
+}
 function __loadable_requireSync__(self, props) {
   var id = self.resolve(props);
   if (typeof __webpack_require__ !== 'undefined') {
@@ -164,12 +211,17 @@ loadable({
     isReady(props) {
         return __loadable_isReady__(this, props);
     },
-    requireAsync: ({ foo }) => import(/* webpackChunkName: \\"/test[request]\\" */ \`./dir/\${foo}/test\`),
+    requireAsync(props) {
+        return __loadable_requireAsyncSync__(this, props);
+    },
     requireSync(props) {
         return __loadable_requireSync__(this, props);
     },
-    resolve() {
-        return require.resolveWeak ? require.resolveWeak(/* webpackChunkName: \\"/test[request]\\" */ \`./dir/\${foo}/test\`) : eval(\\"require.resolve\\")(/* webpackChunkName: \\"/test[request]\\" */ \`./dir/\${foo}/test\`);
+    resolve({ foo }) {
+        if (require.resolveWeak) {
+            return require.resolveWeak(/* webpackChunkName: \\"/test[request]\\" */ \`./dir/\${foo}/test\`);
+        }
+        return eval(\\"require.resolve\\")(/* webpackChunkName: \\"/test[request]\\" */ \`./dir/\${foo}/test\`);
     }
 });
 "
@@ -187,6 +239,14 @@ exports[`transformer aggressive import without "webpackChunkName" should support
   
   return false;
 }
+function __loadable_requireAsyncSync__(self, props) {
+  const key = self.resolve(props)
+  self.resolved[key] = false
+  return self.importAsync(props).then(resolved => {
+   self.resolved[key] = true
+   return resolved;
+  });       
+}
 function __loadable_requireSync__(self, props) {
   var id = self.resolve(props);
   if (typeof __webpack_require__ !== 'undefined') {
@@ -201,12 +261,17 @@ loadable({
     isReady(props) {
         return __loadable_isReady__(this, props);
     },
-    requireAsync: props => import(/* webpackChunkName: \\"[request]\\" */ \`./\${props.foo}\`),
+    requireAsync(props) {
+        return __loadable_requireAsyncSync__(this, props);
+    },
     requireSync(props) {
         return __loadable_requireSync__(this, props);
     },
-    resolve() {
-        return require.resolveWeak ? require.resolveWeak(/* webpackChunkName: \\"[request]\\" */ \`./\${props.foo}\`) : eval(\\"require.resolve\\")(/* webpackChunkName: \\"[request]\\" */ \`./\${props.foo}\`);
+    resolve(props) {
+        if (require.resolveWeak) {
+            return require.resolveWeak(/* webpackChunkName: \\"[request]\\" */ \`./\${props.foo}\`);
+        }
+        return eval(\\"require.resolve\\")(/* webpackChunkName: \\"[request]\\" */ \`./\${props.foo}\`);
     }
 });
 "
@@ -229,6 +294,14 @@ exports[`transformer simple import in a complex promise should work 1`] = `
   
   return false;
 }
+function __loadable_requireAsyncSync__(self, props) {
+  const key = self.resolve(props)
+  self.resolved[key] = false
+  return self.importAsync(props).then(resolved => {
+   self.resolved[key] = true
+   return resolved;
+  });       
+}
 function __loadable_requireSync__(self, props) {
   var id = self.resolve(props);
   if (typeof __webpack_require__ !== 'undefined') {
@@ -243,12 +316,17 @@ loadable({
     isReady(props) {
         return __loadable_isReady__(this, props);
     },
-    requireAsync: () => timeout(import(/* webpackChunkName: \\"ModA\\" */ './ModA'), 2000),
+    requireAsync(props) {
+        return __loadable_requireAsyncSync__(this, props);
+    },
     requireSync(props) {
         return __loadable_requireSync__(this, props);
     },
     resolve() {
-        return require.resolveWeak ? require.resolveWeak(/* webpackChunkName: \\"ModA\\" */ './ModA') : eval(\\"require.resolve\\")(/* webpackChunkName: \\"ModA\\" */ './ModA');
+        if (require.resolveWeak) {
+            return require.resolveWeak(\\"'./ModA'\\");
+        }
+        return eval(\\"require.resolve\\")(\\"'./ModA'\\");
     }
 });
 "
@@ -266,6 +344,14 @@ exports[`transformer simple import should transform path into "chunk-friendly" n
   
   return false;
 }
+function __loadable_requireAsyncSync__(self, props) {
+  const key = self.resolve(props)
+  self.resolved[key] = false
+  return self.importAsync(props).then(resolved => {
+   self.resolved[key] = true
+   return resolved;
+  });       
+}
 function __loadable_requireSync__(self, props) {
   var id = self.resolve(props);
   if (typeof __webpack_require__ !== 'undefined') {
@@ -280,12 +366,17 @@ loadable({
     isReady(props) {
         return __loadable_isReady__(this, props);
     },
-    requireAsync: () => import(/* webpackChunkName: \\"foo-bar\\" */ '../foo/bar'),
+    requireAsync(props) {
+        return __loadable_requireAsyncSync__(this, props);
+    },
     requireSync(props) {
         return __loadable_requireSync__(this, props);
     },
     resolve() {
-        return require.resolveWeak ? require.resolveWeak(/* webpackChunkName: \\"foo-bar\\" */ '../foo/bar') : eval(\\"require.resolve\\")(/* webpackChunkName: \\"foo-bar\\" */ '../foo/bar');
+        if (require.resolveWeak) {
+            return require.resolveWeak(\\"'../foo/bar'\\");
+        }
+        return eval(\\"require.resolve\\")(\\"'../foo/bar'\\");
     }
 });
 "
@@ -303,6 +394,14 @@ exports[`transformer simple import should work with * in name 1`] = `
   
   return false;
 }
+function __loadable_requireAsyncSync__(self, props) {
+  const key = self.resolve(props)
+  self.resolved[key] = false
+  return self.importAsync(props).then(resolved => {
+   self.resolved[key] = true
+   return resolved;
+  });       
+}
 function __loadable_requireSync__(self, props) {
   var id = self.resolve(props);
   if (typeof __webpack_require__ !== 'undefined') {
@@ -317,12 +416,17 @@ loadable({
     isReady(props) {
         return __loadable_isReady__(this, props);
     },
-    requireAsync: () => import(/* webpackChunkName: \\"foo\\" */ \`./foo*\`),
+    requireAsync(props) {
+        return __loadable_requireAsyncSync__(this, props);
+    },
     requireSync(props) {
         return __loadable_requireSync__(this, props);
     },
     resolve() {
-        return require.resolveWeak ? require.resolveWeak(/* webpackChunkName: \\"foo\\" */ \`./foo*\`) : eval(\\"require.resolve\\")(/* webpackChunkName: \\"foo\\" */ \`./foo*\`);
+        if (require.resolveWeak) {
+            return require.resolveWeak(\\"\`./foo*\`\\");
+        }
+        return eval(\\"require.resolve\\")(\\"\`./foo*\`\\");
     }
 });
 "
@@ -340,6 +444,14 @@ exports[`transformer simple import should work with + concatenation 1`] = `
   
   return false;
 }
+function __loadable_requireAsyncSync__(self, props) {
+  const key = self.resolve(props)
+  self.resolved[key] = false
+  return self.importAsync(props).then(resolved => {
+   self.resolved[key] = true
+   return resolved;
+  });       
+}
 function __loadable_requireSync__(self, props) {
   var id = self.resolve(props);
   if (typeof __webpack_require__ !== 'undefined') {
@@ -354,12 +466,17 @@ loadable({
     isReady(props) {
         return __loadable_isReady__(this, props);
     },
-    requireAsync: () => import(/* webpackChunkName: \\"\\" */ './Mod' + 'A'),
+    requireAsync(props) {
+        return __loadable_requireAsyncSync__(this, props);
+    },
     requireSync(props) {
         return __loadable_requireSync__(this, props);
     },
     resolve() {
-        return require.resolveWeak ? require.resolveWeak(/* webpackChunkName: \\"\\" */ './Mod' + 'A') : eval(\\"require.resolve\\")(/* webpackChunkName: \\"\\" */ './Mod' + 'A');
+        if (require.resolveWeak) {
+            return require.resolveWeak(/* webpackChunkName: \\"\\" */ './Mod' + 'A');
+        }
+        return eval(\\"require.resolve\\")(/* webpackChunkName: \\"\\" */ './Mod' + 'A');
     }
 });
 "
@@ -377,6 +494,14 @@ exports[`transformer simple import should work with template literal 1`] = `
   
   return false;
 }
+function __loadable_requireAsyncSync__(self, props) {
+  const key = self.resolve(props)
+  self.resolved[key] = false
+  return self.importAsync(props).then(resolved => {
+   self.resolved[key] = true
+   return resolved;
+  });       
+}
 function __loadable_requireSync__(self, props) {
   var id = self.resolve(props);
   if (typeof __webpack_require__ !== 'undefined') {
@@ -391,12 +516,17 @@ loadable({
     isReady(props) {
         return __loadable_isReady__(this, props);
     },
-    requireAsync: () => import(/* webpackChunkName: \\"ModA\\" */ \`./ModA\`),
+    requireAsync(props) {
+        return __loadable_requireAsyncSync__(this, props);
+    },
     requireSync(props) {
         return __loadable_requireSync__(this, props);
     },
     resolve() {
-        return require.resolveWeak ? require.resolveWeak(/* webpackChunkName: \\"ModA\\" */ \`./ModA\`) : eval(\\"require.resolve\\")(/* webpackChunkName: \\"ModA\\" */ \`./ModA\`);
+        if (require.resolveWeak) {
+            return require.resolveWeak(\\"\`./ModA\`\\");
+        }
+        return eval(\\"require.resolve\\")(\\"\`./ModA\`\\");
     }
 });
 "
@@ -414,6 +544,14 @@ exports[`transformer simple import with "webpackChunkName" comment should use it
   
   return false;
 }
+function __loadable_requireAsyncSync__(self, props) {
+  const key = self.resolve(props)
+  self.resolved[key] = false
+  return self.importAsync(props).then(resolved => {
+   self.resolved[key] = true
+   return resolved;
+  });       
+}
 function __loadable_requireSync__(self, props) {
   var id = self.resolve(props);
   if (typeof __webpack_require__ !== 'undefined') {
@@ -428,12 +566,17 @@ loadable({
     isReady(props) {
         return __loadable_isReady__(this, props);
     },
-    requireAsync: () => import(/* webpackChunkName: \\"ChunkA\\" */ './ModA'),
+    requireAsync(props) {
+        return __loadable_requireAsyncSync__(this, props);
+    },
     requireSync(props) {
         return __loadable_requireSync__(this, props);
     },
     resolve() {
-        return require.resolveWeak ? require.resolveWeak(/* webpackChunkName: \\"ChunkA\\" */ './ModA') : eval(\\"require.resolve\\")(/* webpackChunkName: \\"ChunkA\\" */ './ModA');
+        if (require.resolveWeak) {
+            return require.resolveWeak(\\"'./ModA'\\");
+        }
+        return eval(\\"require.resolve\\")(\\"'./ModA'\\");
     }
 });
 "
@@ -451,6 +594,14 @@ exports[`transformer simple import with "webpackChunkName" comment should use it
   
   return false;
 }
+function __loadable_requireAsyncSync__(self, props) {
+  const key = self.resolve(props)
+  self.resolved[key] = false
+  return self.importAsync(props).then(resolved => {
+   self.resolved[key] = true
+   return resolved;
+  });       
+}
 function __loadable_requireSync__(self, props) {
   var id = self.resolve(props);
   if (typeof __webpack_require__ !== 'undefined') {
@@ -465,12 +616,17 @@ loadable({
     isReady(props) {
         return __loadable_isReady__(this, props);
     },
-    requireAsync: () => import(/* webpackPrefetch: true, webpackChunkName: \\"ChunkA\\" */ './ModA'),
+    requireAsync(props) {
+        return __loadable_requireAsyncSync__(this, props);
+    },
     requireSync(props) {
         return __loadable_requireSync__(this, props);
     },
     resolve() {
-        return require.resolveWeak ? require.resolveWeak(/* webpackPrefetch: true, webpackChunkName: \\"ChunkA\\" */ './ModA') : eval(\\"require.resolve\\")(/* webpackPrefetch: true, webpackChunkName: \\"ChunkA\\" */ './ModA');
+        if (require.resolveWeak) {
+            return require.resolveWeak(\\"'./ModA'\\");
+        }
+        return eval(\\"require.resolve\\")(\\"'./ModA'\\");
     }
 });
 "
@@ -488,6 +644,14 @@ exports[`transformer simple import without "webpackChunkName" comment should add
   
   return false;
 }
+function __loadable_requireAsyncSync__(self, props) {
+  const key = self.resolve(props)
+  self.resolved[key] = false
+  return self.importAsync(props).then(resolved => {
+   self.resolved[key] = true
+   return resolved;
+  });       
+}
 function __loadable_requireSync__(self, props) {
   var id = self.resolve(props);
   if (typeof __webpack_require__ !== 'undefined') {
@@ -502,12 +666,17 @@ loadable({
     isReady(props) {
         return __loadable_isReady__(this, props);
     },
-    requireAsync: () => import(/* webpackChunkName: \\"ModA\\" */ './ModA'),
+    requireAsync(props) {
+        return __loadable_requireAsyncSync__(this, props);
+    },
     requireSync(props) {
         return __loadable_requireSync__(this, props);
     },
     resolve() {
-        return require.resolveWeak ? require.resolveWeak(/* webpackChunkName: \\"ModA\\" */ './ModA') : eval(\\"require.resolve\\")(/* webpackChunkName: \\"ModA\\" */ './ModA');
+        if (require.resolveWeak) {
+            return require.resolveWeak(\\"'./ModA'\\");
+        }
+        return eval(\\"require.resolve\\")(\\"'./ModA'\\");
     }
 });
 "

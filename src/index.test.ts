@@ -15,9 +15,9 @@ function testPlugin(source: string) {
   }).outputText;
 }
 
-describe.only('transformer', () => {
+describe('transformer', () => {
   describe('simple import', () => {
-    it.only('should work with template literal', () => {
+    it('should work with template literal', () => {
       const result = testPlugin(`
         loadable(() => import(\`./ModA\`))
       `);

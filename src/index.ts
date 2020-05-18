@@ -84,12 +84,13 @@ export function loadableTransformer(ctx: ts.TransformationContext) {
       [
         chunkNameProperty({ ctx, callNode, funcNode }),
         isReadyProperty(ctx),
-        requireAsyncProperty(funcNode),
+        requireAsyncProperty(ctx),
         requireSyncProperty(ctx),
-        resolveProperty(callNode),
+        resolveProperty({ ctx, callNode, funcNode }),
       ],
       true,
     );
+
     return ts.updateCall(node, node.expression, undefined, [obj]);
   }
 

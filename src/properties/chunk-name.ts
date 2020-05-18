@@ -73,6 +73,7 @@ function transformTemplateSpan(span: TemplateSpan, first: boolean, single: boole
   const chunkName = ts.createStringLiteral(
     single ? moduleToChunk(span.getFullText()) : replaceTemplateSpan(span.getFullText(), first),
   );
+
   return ts.createTemplateSpan(chunkName, span.literal);
 }
 
@@ -139,7 +140,7 @@ function sanitizeChunkNameTemplateExpression(node: TemplateExpression) {
   );
 }
 
-function replaceChunkName({ callNode, ctx }: CreatePropertyOptions) {
+function replaceChunkName({ callNode, ctx }: Omit<CreatePropertyOptions, 'funcNode'>) {
   const agressiveImport = isAgressiveImport(callNode);
   const values = getExistingChunkNameComment(callNode);
 
@@ -164,9 +165,9 @@ function replaceChunkName({ callNode, ctx }: CreatePropertyOptions) {
   return chunkNameNode;
 }
 
-export default function chunkNameProperty(options: CreatePropertyOptions) {
-  const chunkNameExpression = replaceChunkName(options);
-  const args = options.funcNode.parameters.map(p => p.getFullText());
+export default function chunkNameProperty({ ctx, callNode, funcNode }: CreatePropertyOptions) {
+  const chunkNameExpression = replaceChunkName({ callNode, ctx });
+  const args = funcNode.parameters.map(p => p.getFullText());
 
   return createObjectMethod('chunkName', args, ts.createBlock([ts.createReturn(chunkNameExpression)], true));
 }
