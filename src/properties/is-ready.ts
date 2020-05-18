@@ -1,5 +1,6 @@
 import ts from 'typescript';
 import { createObjectMethod, emitGlobalFunction } from '../util';
+import { CreatePropertyOptions } from './types';
 
 const isReadyFunctionTemplate = `function __loadable_isReady__(self, props) {
   const key=self.resolve(props)
@@ -14,7 +15,7 @@ const isReadyFunctionTemplate = `function __loadable_isReady__(self, props) {
   return false;
 }`;
 
-export default function isReadyProperty(ctx: ts.TransformationContext): ts.ObjectLiteralElementLike {
+export default function isReadyProperty({ ctx }: CreatePropertyOptions) {
   emitGlobalFunction(ctx, 'loadable:isReadyHelper', isReadyFunctionTemplate);
   return createObjectMethod(
     'isReady',

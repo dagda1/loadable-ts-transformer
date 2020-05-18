@@ -1,5 +1,6 @@
 import ts from 'typescript';
 import { createObjectMethod, emitGlobalFunction } from '../util';
+import { CreatePropertyOptions } from './types';
 
 const requireAsyncSyncFunctionTemplate = `function __loadable_requireAsyncSync__(self, props) {
   const key = self.resolve(props)
@@ -10,7 +11,7 @@ const requireAsyncSyncFunctionTemplate = `function __loadable_requireAsyncSync__
   });       
 }`;
 
-export default function requireAsyncProperty(ctx: ts.TransformationContext): ts.ObjectLiteralElementLike {
+export default function requireAsyncProperty({ ctx }: CreatePropertyOptions) {
   emitGlobalFunction(ctx, 'loadable:requireAsycSyncHelper', requireAsyncSyncFunctionTemplate);
   return createObjectMethod(
     'requireAsync',

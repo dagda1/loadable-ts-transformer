@@ -1,6 +1,7 @@
 import ts from 'typescript';
 
 import { emitGlobalFunction, createObjectMethod } from '../util';
+import { CreatePropertyOptions } from './types';
 
 const requireSyncFunctionTemplate = `function __loadable_requireSync__(self, props) {
   var id = self.resolve(props);
@@ -12,7 +13,7 @@ const requireSyncFunctionTemplate = `function __loadable_requireSync__(self, pro
   return eval('module.require')(id);
 }`;
 
-export default function requireSyncProperty(ctx: ts.TransformationContext): ts.ObjectLiteralElementLike {
+export default function requireSyncProperty({ ctx }: CreatePropertyOptions) {
   emitGlobalFunction(ctx, 'loadable:requireSyncHelper', requireSyncFunctionTemplate);
   return createObjectMethod(
     'requireSync',
