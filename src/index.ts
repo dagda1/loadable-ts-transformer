@@ -5,12 +5,13 @@ import requireSyncProperty from './properties/require-sync';
 import isReadyProperty from './properties/is-ready';
 import resolveProperty from './properties/resolve';
 import importAsyncProperty from './properties/import-async-property';
-import { getLeadingComments } from './util';
+import { getLeadingComments, removeMatchingLeadingComments } from './util';
 
 const LOADABLE_COMMENT = '#__LOADABLE__';
 
-function isLoadableNode(node: ts.Node): node is ts.CallExpression {
+function isLoadableNode(node: ts.Node, ctx: ts.TransformationContext): node is ts.CallExpression {
   if (getLeadingComments(node)?.some(comment => comment.includes(LOADABLE_COMMENT))) {
+    removeMatchingLeadingComments(node, ctx, /\#__LOADABLE__/g);
     return true;
   }
 
@@ -42,12 +43,20 @@ function collectImports(loadableCallExpressionNode: ts.CallExpression, ctx: ts.T
     return ts.visitEachChild(node, visit, ctx);
   }
 
-  ts.visitNodes(loadableCallExpressionNode.arguments, visit);
+  if (ts.isCallLikeExpression(loadableCallExpressionNode)) {
+    ts.visitNodes(loadableCallExpressionNode.arguments, visit);
+  } else {
+    ts.visitNode(loadableCallExpressionNode, visit);
+  }
 
   return ret;
 }
 
 function getFuncNode(loadableCallExpressionNode: ts.Node): ts.FunctionExpression | ts.ArrowFunction | undefined {
+  if (ts.isFunctionLike(loadableCallExpressionNode)) {
+    return loadableCallExpressionNode as ts.FunctionExpression;
+  }
+
   if (!ts.isCallExpression(loadableCallExpressionNode)) {
     return;
   }
@@ -66,7 +75,7 @@ function getFuncNode(loadableCallExpressionNode: ts.Node): ts.FunctionExpression
 
 export function loadableTransformer(ctx: ts.TransformationContext) {
   function visitNode(node: ts.Node): ts.Node {
-    if (!isLoadableNode(node)) {
+    if (!isLoadableNode(node, ctx)) {
       return ts.visitEachChild(node, visitNode, ctx);
     }
 
@@ -102,7 +111,7 @@ export function loadableTransformer(ctx: ts.TransformationContext) {
       true,
     );
 
-    return ts.updateCall(node, node.expression, undefined, [obj]);
+    return ts.updateCall(node, node.expression || [], undefined, [obj]);
   }
 
   return (source: ts.SourceFile) => ts.updateSourceFileNode(source, ts.visitNodes(source.statements, visitNode));

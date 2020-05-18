@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-focused-tests */
 import ts from 'typescript';
 import { loadableTransformer } from './';
 
@@ -145,12 +146,12 @@ describe('transformer', () => {
   describe('Magic comment', () => {
     it('should transpile shortand properties', () => {
       const result = testPlugin(`
-        const obj = {
-          /* #__LOADABLE__ */
-          load() {
-            return import('moment')
+          const obj = {
+            /* #__LOADABLE__ */
+            load() {
+              return import('moment')
+            }
           }
-        }
       `);
 
       expect(result).toMatchSnapshot();

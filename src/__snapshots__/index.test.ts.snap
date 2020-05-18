@@ -1,28 +1,209 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`transformer Magic comment should remove only needed comments 1`] = `
-"const load = /* #__LOADABLE__ */ /* IMPORTANT! */ () => import('moment');
+"function __loadable_isReady__(self, props) {
+  const key=self.resolve(props)
+  if (self.resolved[key] !== true) {
+    return false
+  }
+  if (typeof __webpack_modules__ !== \\"undefined\\") {
+    return !!__webpack_modules__[self.resolve(props)];
+  }
+  
+  return false;
+}
+function __loadable_requireAsyncSync__(self, props) {
+  const key = self.resolve(props)
+  self.resolved[key] = false
+  return self.importAsync(props).then(resolved => {
+   self.resolved[key] = true
+   return resolved;
+  });       
+}
+function __loadable_requireSync__(self, props) {
+  var id = self.resolve(props);
+  if (typeof __webpack_require__ !== 'undefined') {
+    return __webpack_require__(id);
+  }
+  return eval('module.require')(id);
+}
+const load = ()({
+    chunkName() {
+        return \\"moment\\";
+    },
+    isReady(props) {
+        return __loadable_isReady__(this, props);
+    },
+    importAsync: () => import(/* webpackChunkName: \\"moment\\" */ 'moment'),
+    requireAsync(props) {
+        return __loadable_requireAsyncSync__(this, props);
+    },
+    requireSync(props) {
+        return __loadable_requireSync__(this, props);
+    },
+    resolve() {
+        if (require.resolveWeak) {
+            return require.resolveWeak(\\"'moment'\\");
+        }
+        return eval(\\"require.resolve\\")(\\"'moment'\\");
+    }
+});
 "
 `;
 
 exports[`transformer Magic comment should transpile arrow functions 1`] = `
-"const load = /* #__LOADABLE__ */ () => import('moment');
+"function __loadable_isReady__(self, props) {
+  const key=self.resolve(props)
+  if (self.resolved[key] !== true) {
+    return false
+  }
+  if (typeof __webpack_modules__ !== \\"undefined\\") {
+    return !!__webpack_modules__[self.resolve(props)];
+  }
+  
+  return false;
+}
+function __loadable_requireAsyncSync__(self, props) {
+  const key = self.resolve(props)
+  self.resolved[key] = false
+  return self.importAsync(props).then(resolved => {
+   self.resolved[key] = true
+   return resolved;
+  });       
+}
+function __loadable_requireSync__(self, props) {
+  var id = self.resolve(props);
+  if (typeof __webpack_require__ !== 'undefined') {
+    return __webpack_require__(id);
+  }
+  return eval('module.require')(id);
+}
+const load = ()({
+    chunkName() {
+        return \\"moment\\";
+    },
+    isReady(props) {
+        return __loadable_isReady__(this, props);
+    },
+    importAsync: () => import(/* webpackChunkName: \\"moment\\" */ 'moment'),
+    requireAsync(props) {
+        return __loadable_requireAsyncSync__(this, props);
+    },
+    requireSync(props) {
+        return __loadable_requireSync__(this, props);
+    },
+    resolve() {
+        if (require.resolveWeak) {
+            return require.resolveWeak(\\"'moment'\\");
+        }
+        return eval(\\"require.resolve\\")(\\"'moment'\\");
+    }
+});
 "
 `;
 
 exports[`transformer Magic comment should transpile function expression 1`] = `
-"const load = /* #__LOADABLE__ */ function () {
-    return import('moment');
-};
+"function __loadable_isReady__(self, props) {
+  const key=self.resolve(props)
+  if (self.resolved[key] !== true) {
+    return false
+  }
+  if (typeof __webpack_modules__ !== \\"undefined\\") {
+    return !!__webpack_modules__[self.resolve(props)];
+  }
+  
+  return false;
+}
+function __loadable_requireAsyncSync__(self, props) {
+  const key = self.resolve(props)
+  self.resolved[key] = false
+  return self.importAsync(props).then(resolved => {
+   self.resolved[key] = true
+   return resolved;
+  });       
+}
+function __loadable_requireSync__(self, props) {
+  var id = self.resolve(props);
+  if (typeof __webpack_require__ !== 'undefined') {
+    return __webpack_require__(id);
+  }
+  return eval('module.require')(id);
+}
+const load = ()({
+    chunkName() {
+        return \\"moment\\";
+    },
+    isReady(props) {
+        return __loadable_isReady__(this, props);
+    },
+    importAsync: function () {
+        return import(/* webpackChunkName: \\"moment\\" */ 'moment');
+    },
+    requireAsync(props) {
+        return __loadable_requireAsyncSync__(this, props);
+    },
+    requireSync(props) {
+        return __loadable_requireSync__(this, props);
+    },
+    resolve() {
+        if (require.resolveWeak) {
+            return require.resolveWeak(\\"'moment'\\");
+        }
+        return eval(\\"require.resolve\\")(\\"'moment'\\");
+    }
+});
 "
 `;
 
 exports[`transformer Magic comment should transpile shortand properties 1`] = `
-"const obj = {
-    /* #__LOADABLE__ */
-    load() {
-        return import('moment');
-    }
+"function __loadable_isReady__(self, props) {
+  const key=self.resolve(props)
+  if (self.resolved[key] !== true) {
+    return false
+  }
+  if (typeof __webpack_modules__ !== \\"undefined\\") {
+    return !!__webpack_modules__[self.resolve(props)];
+  }
+  
+  return false;
+}
+function __loadable_requireAsyncSync__(self, props) {
+  const key = self.resolve(props)
+  self.resolved[key] = false
+  return self.importAsync(props).then(resolved => {
+   self.resolved[key] = true
+   return resolved;
+  });       
+}
+function __loadable_requireSync__(self, props) {
+  var id = self.resolve(props);
+  if (typeof __webpack_require__ !== 'undefined') {
+    return __webpack_require__(id);
+  }
+  return eval('module.require')(id);
+}
+const obj = {
+    ()({
+        chunkName() {
+            return \\"moment\\";
+        },
+        isReady(props) {
+            return __loadable_isReady__(this, props);
+        },
+        importAsync: (),
+        requireAsync(props) {
+            return __loadable_requireAsyncSync__(this, props);
+        },
+        requireSync(props) {
+            return __loadable_requireSync__(this, props);
+        },
+        resolve() {
+            if (require.resolveWeak) {
+                return require.resolveWeak(\\"'moment'\\");
+            }
+            return eval(\\"require.resolve\\")(\\"'moment'\\");
+        }
+    })
 };
 "
 `;
