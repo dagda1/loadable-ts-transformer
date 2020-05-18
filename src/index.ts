@@ -4,8 +4,16 @@ import requireAsyncProperty from './properties/require-async';
 import requireSyncProperty from './properties/require-sync';
 import isReadyProperty from './properties/is-ready';
 import resolveProperty from './properties/resolve';
+import importAsyncProperty from './properties/import-async-property';
+import { getLeadingComments } from './util';
+
+const LOADABLE_COMMENT = '#__LOADABLE__';
 
 function isLoadableNode(node: ts.Node): node is ts.CallExpression {
+  if (getLeadingComments(node)?.some(comment => comment.includes(LOADABLE_COMMENT))) {
+    return true;
+  }
+
   if (!ts.isCallExpression(node)) {
     return false;
   }
@@ -39,9 +47,13 @@ function collectImports(loadableCallExpressionNode: ts.CallExpression, ctx: ts.T
   return ret;
 }
 
-function getFuncNode(
-  loadableCallExpressionNode: ts.CallExpression,
-): ts.FunctionExpression | ts.ArrowFunction | undefined {
+function getFuncNode(loadableCallExpressionNode: ts.Node): ts.FunctionExpression | ts.ArrowFunction | undefined {
+  if (!ts.isCallExpression(loadableCallExpressionNode)) {
+    console.log(loadableCallExpressionNode.getFullText());
+    console.log(ts.isObjectLiteralExpression(loadableCallExpressionNode));
+    return;
+  }
+
   const arg = loadableCallExpressionNode.arguments[0];
   if (!arg) {
     return;
@@ -68,6 +80,8 @@ export function loadableTransformer(ctx: ts.TransformationContext) {
     // Collect dynamic import call expressions such as `import('./foo')`
     const imports = collectImports(node, ctx);
 
+    console.log(imports.length);
+
     // Ignore loadable function that does not have any "import" call
     if (imports.length === 0) {
       return node;
@@ -84,6 +98,7 @@ export function loadableTransformer(ctx: ts.TransformationContext) {
       [
         chunkNameProperty({ ctx, callNode, funcNode }),
         isReadyProperty({ ctx, callNode, funcNode }),
+        importAsyncProperty({ ctx, callNode, funcNode }),
         requireAsyncProperty({ ctx, callNode, funcNode }),
         requireSyncProperty({ ctx, callNode, funcNode }),
         resolveProperty({ ctx, callNode, funcNode }),

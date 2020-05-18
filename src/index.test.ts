@@ -2,7 +2,7 @@
 import ts from 'typescript';
 import { loadableTransformer } from './';
 
-function testPlugin(source: string) {
+function testTransformer(source: string) {
   return ts.transpileModule(source, {
     transformers: {
       before: [loadableTransformer],
@@ -18,7 +18,7 @@ function testPlugin(source: string) {
 describe('transformer', () => {
   describe('simple import', () => {
     it('should work with template literal', () => {
-      const result = testPlugin(`
+      const result = testTransformer(`
         loadable(() => import(\`./ModA\`))
       `);
 
@@ -26,7 +26,7 @@ describe('transformer', () => {
     });
 
     it('should work with + concatenation', () => {
-      const result = testPlugin(`
+      const result = testTransformer(`
         loadable(() => import('./Mod' + 'A'))
       `);
 
@@ -34,7 +34,7 @@ describe('transformer', () => {
     });
 
     it('should work with * in name', () => {
-      const result = testPlugin(`
+      const result = testTransformer(`
         loadable(() => import(\`./foo*\`))
       `);
 
@@ -42,7 +42,7 @@ describe('transformer', () => {
     });
 
     it('should transform path into "chunk-friendly" name', () => {
-      const result = testPlugin(`
+      const result = testTransformer(`
         loadable(() => import('../foo/bar'))
       `);
 
@@ -51,7 +51,7 @@ describe('transformer', () => {
 
     describe('with "webpackChunkName" comment', () => {
       it('should use it', () => {
-        const result = testPlugin(`
+        const result = testTransformer(`
           loadable(() => import(/* webpackChunkName: "ChunkA" */ './ModA'))
         `);
 
@@ -59,7 +59,7 @@ describe('transformer', () => {
       });
 
       it('should use it even if comment is separated by ","', () => {
-        const result = testPlugin(`
+        const result = testTransformer(`
           loadable(() => import(/* webpackPrefetch: true, webpackChunkName: "ChunkA" */ './ModA'))
         `);
 
@@ -69,7 +69,7 @@ describe('transformer', () => {
 
     describe('without "webpackChunkName" comment', () => {
       it('should add it', () => {
-        const result = testPlugin(`
+        const result = testTransformer(`
           loadable(() => import('./ModA'))
         `);
 
@@ -79,7 +79,7 @@ describe('transformer', () => {
 
     describe('in a complex promise', () => {
       it('should work', () => {
-        const result = testPlugin(`
+        const result = testTransformer(`
           loadable(() => timeout(import('./ModA'), 2000))
         `);
 
@@ -90,7 +90,7 @@ describe('transformer', () => {
 
   describe('aggressive import', () => {
     it('should work with destructuration', () => {
-      const result = testPlugin(`
+      const result = testTransformer(`
         loadable(({ foo }) => import(/* webpackChunkName: "Pages" */ \`./\${foo}\`))
       `);
       expect(result).toMatchSnapshot();
@@ -98,7 +98,7 @@ describe('transformer', () => {
 
     describe('with "webpackChunkName"', () => {
       it('should replace it', () => {
-        const result = testPlugin(`
+        const result = testTransformer(`
           loadable(props => import(/* webpackChunkName: "Pages" */ \`./\${props.foo}\`))
         `);
 
@@ -108,7 +108,7 @@ describe('transformer', () => {
 
     describe('without "webpackChunkName"', () => {
       it('should support simple request', () => {
-        const result = testPlugin(`
+        const result = testTransformer(`
           loadable(props => import(\`./\${props.foo}\`))
         `);
 
@@ -116,7 +116,7 @@ describe('transformer', () => {
       });
 
       it('should support complex request', () => {
-        const result = testPlugin(`
+        const result = testTransformer(`
           loadable(props => import(\`./dir/\${props.foo}/test\`))
         `);
 
@@ -124,7 +124,7 @@ describe('transformer', () => {
       });
 
       it('should support destructuring', () => {
-        const result = testPlugin(`
+        const result = testTransformer(`
           loadable(({ foo }) => import(\`./dir/\${foo}/test\`))
         `);
 
@@ -135,7 +135,7 @@ describe('transformer', () => {
 
   describe('loadable.lib', () => {
     it('should be transpiled too', () => {
-      const result = testPlugin(`
+      const result = testTransformer(`
         loadable.lib(() => import('moment'))
       `);
 
@@ -143,9 +143,9 @@ describe('transformer', () => {
     });
   });
 
-  describe('Magic comment', () => {
-    it('should transpile shortand properties', () => {
-      const result = testPlugin(`
+  describe.only('Magic comment', () => {
+    it.only('should transpile shortand properties', () => {
+      const result = testTransformer(`
         const obj = {
           /* #__LOADABLE__ */
           load() {
@@ -158,7 +158,7 @@ describe('transformer', () => {
     });
 
     it('should transpile arrow functions', () => {
-      const result = testPlugin(`
+      const result = testTransformer(`
         const load = /* #__LOADABLE__ */ () => import('moment')
       `);
 
@@ -166,7 +166,7 @@ describe('transformer', () => {
     });
 
     it('should transpile function expression', () => {
-      const result = testPlugin(`
+      const result = testTransformer(`
         const load = /* #__LOADABLE__ */ function () {
           return import('moment')
         }
@@ -175,7 +175,7 @@ describe('transformer', () => {
     });
 
     it('should remove only needed comments', () => {
-      const result = testPlugin(`
+      const result = testTransformer(`
         const load = /* #__LOADABLE__ */ /* IMPORTANT! */ () => import('moment')
       `);
 
