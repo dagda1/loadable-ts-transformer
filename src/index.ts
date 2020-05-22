@@ -9,10 +9,12 @@ import { getLeadingComments, removeMatchingLeadingComments } from './util';
 
 const LOADABLE_COMMENT = '#__LOADABLE__';
 
-function isLoadableNode(node: ts.Node, ctx: ts.TransformationContext): node is ts.CallExpression {
-  if (getLeadingComments(node)?.some(comment => comment.includes(LOADABLE_COMMENT))) {
-    removeMatchingLeadingComments(node, ctx, /\#__LOADABLE__/g);
-    return true;
+function isLoadableNode(node: ts.Node, ctx: ts.TransformationContext): node is ts.Node {
+  if (ts.isObjectLiteralExpression(node)) {
+    if (getLeadingComments(node.properties[0])?.some(comment => comment.includes(LOADABLE_COMMENT))) {
+      removeMatchingLeadingComments(node.properties[0], ctx, /\#__LOADABLE__/g);
+      return true;
+    }
   }
 
   if (!ts.isCallExpression(node)) {
@@ -32,7 +34,7 @@ function isLoadableNode(node: ts.Node, ctx: ts.TransformationContext): node is t
   return true;
 }
 
-function collectImports(loadableCallExpressionNode: ts.CallExpression, ctx: ts.TransformationContext) {
+function collectImports(loadableCallExpressionNode: ts.Node, ctx: ts.TransformationContext) {
   const ret: ts.CallExpression[] = [];
   function visit(node: ts.Node): ts.Node {
     if (node.kind === ts.SyntaxKind.ImportKeyword) {
@@ -43,7 +45,7 @@ function collectImports(loadableCallExpressionNode: ts.CallExpression, ctx: ts.T
     return ts.visitEachChild(node, visit, ctx);
   }
 
-  if (ts.isCallLikeExpression(loadableCallExpressionNode)) {
+  if (ts.isCallExpression(loadableCallExpressionNode)) {
     ts.visitNodes(loadableCallExpressionNode.arguments, visit);
   } else {
     ts.visitNode(loadableCallExpressionNode, visit);
@@ -52,7 +54,13 @@ function collectImports(loadableCallExpressionNode: ts.CallExpression, ctx: ts.T
   return ret;
 }
 
-function getFuncNode(loadableCallExpressionNode: ts.Node): ts.FunctionExpression | ts.ArrowFunction | undefined {
+function getFuncNode(
+  loadableCallExpressionNode: ts.Node,
+): ts.MethodDeclaration | ts.FunctionExpression | ts.ArrowFunction | undefined {
+  if (ts.isObjectLiteralExpression(loadableCallExpressionNode)) {
+    // TODO: find this node?
+    return loadableCallExpressionNode.properties[0] as ts.MethodDeclaration;
+  }
   if (ts.isFunctionLike(loadableCallExpressionNode)) {
     return loadableCallExpressionNode as ts.FunctionExpression;
   }
@@ -110,6 +118,14 @@ export function loadableTransformer(ctx: ts.TransformationContext) {
       ],
       true,
     );
+
+    if (!ts.isCallExpression(node)) {
+      if (ts.isObjectLiteralExpression(node)) {
+        return ts.updateObjectLiteral(node, obj.properties);
+      }
+
+      return node;
+    }
 
     return ts.updateCall(node, node.expression || [], undefined, [obj]);
   }

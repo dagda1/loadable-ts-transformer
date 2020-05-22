@@ -143,8 +143,8 @@ describe('transformer', () => {
     });
   });
 
-  describe('Magic comment', () => {
-    it('should transpile shortand properties', () => {
+  describe.only('Magic comment', () => {
+    it.only('should transpile shortand properties', () => {
       const result = testPlugin(`
           const obj = {
             /* #__LOADABLE__ */
