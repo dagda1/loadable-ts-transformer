@@ -1,4 +1,4 @@
-import * as ts from 'typescript';
+import ts from 'typescript';
 import chunkNameProperty from './properties/chunk-name';
 import requireAsyncProperty from './properties/require-async';
 import requireSyncProperty from './properties/require-sync';
@@ -145,15 +145,15 @@ export function loadableTransformer(ctx: ts.TransformationContext) {
       true,
     );
 
+    if (ts.isObjectLiteralExpression(node)) {
+      return ts.updateObjectLiteral(node, obj.properties);
+    }
+
+    if (ts.isArrowFunction(node) || ts.isFunctionExpression(node)) {
+      return obj;
+    }
+
     if (!ts.isCallExpression(node)) {
-      if (ts.isObjectLiteralExpression(node)) {
-        return ts.updateObjectLiteral(node, obj.properties);
-      }
-
-      if (ts.isArrowFunction(node) || ts.isFunctionExpression(node)) {
-        return obj;
-      }
-
       return node;
     }
 
