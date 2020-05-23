@@ -1,33 +1,64 @@
 import ts from 'typescript';
-import { createObjectMethod, emitGlobalFunction } from '../util';
+import { createObjectMethod } from '../util';
 import { CreatePropertyOptions } from './types';
 
-const isReadyFunctionTemplate = `function __loadable_isReady__(self, props) {
-  const key=self.resolve(props)
-  if (self.resolved[key] !== true) {
-    return false
-  }
-
-  if (typeof __webpack_modules__ !== "undefined") {
-    return !!__webpack_modules__[self.resolve(props)];
-  }
-  
-  return false;
-}`;
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function isReadyProperty({ ctx }: CreatePropertyOptions) {
-  emitGlobalFunction(ctx, 'loadable:isReadyHelper', isReadyFunctionTemplate);
   return createObjectMethod(
     'isReady',
     ['props'],
     ts.createBlock(
       [
-        ts.createReturn(
-          ts.createCall(ts.createIdentifier('__loadable_isReady__'), undefined, [
-            ts.createIdentifier('this'),
-            ts.createIdentifier('props'),
-          ]),
+        ts.createVariableStatement(
+          undefined,
+          ts.createVariableDeclarationList(
+            [
+              ts.createVariableDeclaration(
+                ts.createIdentifier('key'),
+                undefined,
+                ts.createCall(ts.createPropertyAccess(ts.createThis(), ts.createIdentifier('resolve')), undefined, [
+                  ts.createIdentifier('props'),
+                ]),
+              ),
+            ],
+            ts.NodeFlags.Const,
+          ),
         ),
+        ts.createIf(
+          ts.createBinary(
+            ts.createElementAccess(
+              ts.createPropertyAccess(ts.createThis(), ts.createIdentifier('resolved')),
+              ts.createIdentifier('key'),
+            ),
+            ts.createToken(ts.SyntaxKind.ExclamationEqualsEqualsToken),
+            ts.createTrue(),
+          ),
+          ts.createBlock([ts.createReturn(ts.createFalse())], true),
+          undefined,
+        ),
+        ts.createIf(
+          ts.createBinary(
+            ts.createTypeOf(ts.createIdentifier('__webpack_modules__')),
+            ts.createToken(ts.SyntaxKind.ExclamationEqualsEqualsToken),
+            ts.createStringLiteral('undefined'),
+          ),
+          ts.createBlock(
+            [
+              ts.createReturn(
+                ts.createPrefix(
+                  ts.SyntaxKind.ExclamationToken,
+                  ts.createPrefix(
+                    ts.SyntaxKind.ExclamationToken,
+                    ts.createElementAccess(ts.createIdentifier('__webpack_modules__'), ts.createIdentifier('key')),
+                  ),
+                ),
+              ),
+            ],
+            true,
+          ),
+          undefined,
+        ),
+        ts.createReturn(ts.createFalse()),
       ],
       true,
     ),

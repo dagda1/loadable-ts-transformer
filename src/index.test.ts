@@ -144,7 +144,7 @@ describe('transformer', () => {
   });
 
   describe.only('Magic comment', () => {
-    it.only('should transpile shortand properties', () => {
+    it('should transpile shortand properties', () => {
       const result = testPlugin(`
           const obj = {
             /* #__LOADABLE__ */
@@ -165,7 +165,7 @@ describe('transformer', () => {
       expect(result).toMatchSnapshot();
     });
 
-    it('should transpile function expression', () => {
+    it.only('should transpile function expression', () => {
       const result = testPlugin(`
         const load = /* #__LOADABLE__ */ function () {
           return import('moment')
@@ -174,6 +174,7 @@ describe('transformer', () => {
       expect(result).toMatchSnapshot();
     });
 
+    // TODO: this is still removing all coments
     it('should remove only needed comments', () => {
       const result = testPlugin(`
         const load = /* #__LOADABLE__ */ /* IMPORTANT! */ () => import('moment')

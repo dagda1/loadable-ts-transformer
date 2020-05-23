@@ -1,36 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`transformer Magic comment should transpile shortand properties 1`] = `
-"function __loadable_isReady__(self, props) {
-  const key=self.resolve(props)
-  if (self.resolved[key] !== true) {
-    return false
-  }
-  if (typeof __webpack_modules__ !== \\"undefined\\") {
-    return !!__webpack_modules__[self.resolve(props)];
-  }
-  
-  return false;
-}
-function __loadable_requireAsyncSync__(self, props) {
-  const key = self.resolve(props)
-  self.resolved[key] = false
-  return self.importAsync(props).then(resolved => {
-   self.resolved[key] = true
-   return resolved;
-  });       
-}
-function __loadable_requireSync__(self, props) {
-  var id = self.resolve(props);
-  if (typeof __webpack_require__ !== 'undefined') {
-    return __webpack_require__(id);
-  }
-  return eval('module.require')(id);
-}
-const obj = {
-    importAsync: () => {
-        return import(/* webpackChunkName: \\"moment\\" */ 'moment');
-    }
+exports[`transformer Magic comment should transpile function expression 1`] = `
+"const load = /* #__LOADABLE__ */ function () {
+    return import('moment');
 };
 "
 `;

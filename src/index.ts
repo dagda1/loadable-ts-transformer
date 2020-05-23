@@ -5,15 +5,32 @@ import requireSyncProperty from './properties/require-sync';
 import isReadyProperty from './properties/is-ready';
 import resolveProperty from './properties/resolve';
 import importAsyncProperty from './properties/import-async-property';
-import { getLeadingComments } from './util';
+import { getLeadingComments, removeMatchingLeadingComments } from './util';
 
 const LOADABLE_COMMENT = '#__LOADABLE__';
 
-function isLoadableNode(node: ts.Node): node is ts.Node {
+function isLoadableNode(node: ts.Node, ctx: ts.TransformationContext): node is ts.Node {
   if (ts.isObjectLiteralExpression(node)) {
+    // TODO: do we need to use node.properties
     if (getLeadingComments(node.properties[0])?.some(comment => comment.includes(LOADABLE_COMMENT))) {
+      removeMatchingLeadingComments(node.properties[0], ctx, /\#__LOADABLE__/g);
       return true;
     }
+  }
+
+  if (ts.isArrowFunction(node)) {
+    if (getLeadingComments(node)?.some(comment => comment.includes(LOADABLE_COMMENT))) {
+      removeMatchingLeadingComments(node, ctx, /\#__LOADABLE__/g);
+      return true;
+    }
+
+    return false;
+  }
+
+  if (ts.isFunctionExpression(node)) {
+    console.log(node.getFullText());
+    console.log(node.kind);
+    return false;
   }
 
   if (!ts.isCallExpression(node)) {
@@ -82,7 +99,7 @@ function getFuncNode(
 
 export function loadableTransformer(ctx: ts.TransformationContext) {
   function visitNode(node: ts.Node): ts.Node {
-    if (!isLoadableNode(node)) {
+    if (!isLoadableNode(node, ctx)) {
       return ts.visitEachChild(node, visitNode, ctx);
     }
 
@@ -120,7 +137,14 @@ export function loadableTransformer(ctx: ts.TransformationContext) {
 
     if (!ts.isCallExpression(node)) {
       if (ts.isObjectLiteralExpression(node)) {
-        return ts.updateObjectLiteral(node, [obj.properties[2]]);
+        return ts.updateObjectLiteral(node, [
+          chunkNameProperty({ ctx, callNode, funcNode }),
+          importAsyncProperty({ ctx, callNode, funcNode }),
+        ]);
+      }
+
+      if (ts.isArrowFunction(node)) {
+        return obj;
       }
 
       return node;

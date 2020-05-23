@@ -1,30 +1,52 @@
 import ts from 'typescript';
 
-import { emitGlobalFunction, createObjectMethod } from '../util';
+import { createObjectMethod } from '../util';
 import { CreatePropertyOptions } from './types';
 
-const requireSyncFunctionTemplate = `function __loadable_requireSync__(self, props) {
-  var id = self.resolve(props);
-
-  if (typeof __webpack_require__ !== 'undefined') {
-    return __webpack_require__(id);
-  }
-
-  return eval('module.require')(id);
-}`;
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function requireSyncProperty({ ctx }: CreatePropertyOptions) {
-  emitGlobalFunction(ctx, 'loadable:requireSyncHelper', requireSyncFunctionTemplate);
   return createObjectMethod(
     'requireSync',
     ['props'],
     ts.createBlock(
       [
+        ts.createVariableStatement(
+          undefined,
+          ts.createVariableDeclarationList(
+            [
+              ts.createVariableDeclaration(
+                ts.createIdentifier('id'),
+                undefined,
+                ts.createCall(ts.createPropertyAccess(ts.createThis(), ts.createIdentifier('resolve')), undefined, [
+                  ts.createIdentifier('props'),
+                ]),
+              ),
+            ],
+            ts.NodeFlags.Const,
+          ),
+        ),
+        ts.createIf(
+          ts.createBinary(
+            ts.createTypeOf(ts.createIdentifier('__webpack_require__')),
+            ts.createToken(ts.SyntaxKind.ExclamationEqualsEqualsToken),
+            ts.createStringLiteral('undefined'),
+          ),
+          ts.createBlock(
+            [
+              ts.createReturn(
+                ts.createCall(ts.createIdentifier('__webpack_require__'), undefined, [ts.createIdentifier('id')]),
+              ),
+            ],
+            true,
+          ),
+          undefined,
+        ),
         ts.createReturn(
-          ts.createCall(ts.createIdentifier('__loadable_requireSync__'), undefined, [
-            ts.createIdentifier('this'),
-            ts.createIdentifier('props'),
-          ]),
+          ts.createCall(
+            ts.createCall(ts.createIdentifier('eval'), undefined, [ts.createStringLiteral('module.require')]),
+            undefined,
+            [ts.createIdentifier('id')],
+          ),
         ),
       ],
       true,

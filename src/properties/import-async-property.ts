@@ -2,6 +2,8 @@ import ts from 'typescript';
 
 import { CreatePropertyOptions } from './types';
 
+const ___slice = [].slice;
+
 export default function importAsyncProperty({ funcNode }: CreatePropertyOptions) {
   if (ts.isMethodDeclaration(funcNode)) {
     return ts.createPropertyAssignment(
@@ -12,8 +14,7 @@ export default function importAsyncProperty({ funcNode }: CreatePropertyOptions)
         funcNode.parameters,
         undefined,
         ts.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
-        // TODO: can we rely on this
-        ts.createBlock([funcNode.body?.statements[0]!], true),
+        ts.createBlock([...___slice.call(funcNode.body?.statements)], true),
       ),
     );
   }
