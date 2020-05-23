@@ -23,7 +23,7 @@ function visitEachLeadingComments(node: ts.Node, cb: (comment: ts.CommentRange &
   const text = node.getFullText();
   const ranges = ts.getLeadingCommentRanges(text, 0);
   if (!ranges) {
-    return [] as string[];
+    return [];
   }
   for (const range of ranges) {
     const comment = {

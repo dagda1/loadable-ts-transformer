@@ -28,24 +28,8 @@ function __loadable_requireSync__(self, props) {
   return eval('module.require')(id);
 }
 const obj = {
-    chunkName() {
-        return \\"moment\\";
-    },
-    isReady(props) {
-        return __loadable_isReady__(this, props);
-    },
-    importAsync: (),
-    requireAsync(props) {
-        return __loadable_requireAsyncSync__(this, props);
-    },
-    requireSync(props) {
-        return __loadable_requireSync__(this, props);
-    },
-    resolve() {
-        if (require.resolveWeak) {
-            return require.resolveWeak(\\"'moment'\\");
-        }
-        return eval(\\"require.resolve\\")(\\"'moment'\\");
+    importAsync: () => {
+        return import(/* webpackChunkName: \\"moment\\" */ 'moment');
     }
 };
 "

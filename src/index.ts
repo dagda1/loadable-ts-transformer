@@ -5,14 +5,13 @@ import requireSyncProperty from './properties/require-sync';
 import isReadyProperty from './properties/is-ready';
 import resolveProperty from './properties/resolve';
 import importAsyncProperty from './properties/import-async-property';
-import { getLeadingComments, removeMatchingLeadingComments } from './util';
+import { getLeadingComments } from './util';
 
 const LOADABLE_COMMENT = '#__LOADABLE__';
 
-function isLoadableNode(node: ts.Node, ctx: ts.TransformationContext): node is ts.Node {
+function isLoadableNode(node: ts.Node): node is ts.Node {
   if (ts.isObjectLiteralExpression(node)) {
     if (getLeadingComments(node.properties[0])?.some(comment => comment.includes(LOADABLE_COMMENT))) {
-      removeMatchingLeadingComments(node.properties[0], ctx, /\#__LOADABLE__/g);
       return true;
     }
   }
@@ -83,7 +82,7 @@ function getFuncNode(
 
 export function loadableTransformer(ctx: ts.TransformationContext) {
   function visitNode(node: ts.Node): ts.Node {
-    if (!isLoadableNode(node, ctx)) {
+    if (!isLoadableNode(node)) {
       return ts.visitEachChild(node, visitNode, ctx);
     }
 
@@ -121,7 +120,7 @@ export function loadableTransformer(ctx: ts.TransformationContext) {
 
     if (!ts.isCallExpression(node)) {
       if (ts.isObjectLiteralExpression(node)) {
-        return ts.updateObjectLiteral(node, obj.properties);
+        return ts.updateObjectLiteral(node, [obj.properties[2]]);
       }
 
       return node;
