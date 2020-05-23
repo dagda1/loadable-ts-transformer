@@ -10,6 +10,17 @@ import resolved from './properties/resolved';
 
 const LOADABLE_COMMENT = '#__LOADABLE__';
 
+function isRenderPropsExpression(node: ts.Node) {
+  return (
+    ts.isExpressionStatement(node) &&
+    ts.isCallExpression(node.expression) &&
+    ts.isPropertyAccessExpression(node.expression.expression) &&
+    node.expression.expression.name.escapedText === 'lib' &&
+    ts.isIdentifier(node.expression.expression.expression) &&
+    node.expression.expression.expression.escapedText === 'loadable'
+  );
+}
+
 function isLoadableNode(node: ts.Node, ctx: ts.TransformationContext): node is ts.Node {
   if (ts.isObjectLiteralExpression(node)) {
     // TODO: do we need to use node.properties
@@ -20,7 +31,10 @@ function isLoadableNode(node: ts.Node, ctx: ts.TransformationContext): node is t
   }
 
   if (ts.isArrowFunction(node) || ts.isFunctionExpression(node)) {
-    if (getLeadingComments(node)?.some(comment => comment.includes(LOADABLE_COMMENT))) {
+    if (
+      isRenderPropsExpression(node.parent.parent) ||
+      getLeadingComments(node)?.some(comment => comment.includes(LOADABLE_COMMENT))
+    ) {
       removeMatchingLeadingComments(node, ctx, /\#__LOADABLE__/g);
       return true;
     }
@@ -133,10 +147,7 @@ export function loadableTransformer(ctx: ts.TransformationContext) {
 
     if (!ts.isCallExpression(node)) {
       if (ts.isObjectLiteralExpression(node)) {
-        return ts.updateObjectLiteral(node, [
-          chunkNameProperty({ ctx, callNode, funcNode }),
-          importAsyncProperty({ ctx, callNode, funcNode }),
-        ]);
+        return ts.updateObjectLiteral(node, obj.properties);
       }
 
       if (ts.isArrowFunction(node) || ts.isFunctionExpression(node)) {
