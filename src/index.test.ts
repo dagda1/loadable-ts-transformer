@@ -143,7 +143,7 @@ describe('transformer', () => {
     });
   });
 
-  describe.only('Magic comment', () => {
+  describe('Magic comment', () => {
     it('should transpile shortand properties', () => {
       const result = testPlugin(`
           const obj = {
@@ -165,7 +165,7 @@ describe('transformer', () => {
       expect(result).toMatchSnapshot();
     });
 
-    it.only('should transpile function expression', () => {
+    it('should transpile function expression', () => {
       const result = testPlugin(`
         const load = /* #__LOADABLE__ */ function () {
           return import('moment')

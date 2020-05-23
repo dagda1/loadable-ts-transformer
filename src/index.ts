@@ -6,6 +6,7 @@ import isReadyProperty from './properties/is-ready';
 import resolveProperty from './properties/resolve';
 import importAsyncProperty from './properties/import-async-property';
 import { getLeadingComments, removeMatchingLeadingComments } from './util';
+import resolved from './properties/resolved';
 
 const LOADABLE_COMMENT = '#__LOADABLE__';
 
@@ -119,6 +120,7 @@ export function loadableTransformer(ctx: ts.TransformationContext) {
 
     const obj = ts.createObjectLiteral(
       [
+        resolved(),
         chunkNameProperty({ ctx, callNode, funcNode }),
         isReadyProperty({ ctx, callNode, funcNode }),
         importAsyncProperty({ ctx, callNode, funcNode }),
