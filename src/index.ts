@@ -18,18 +18,12 @@ function isLoadableNode(node: ts.Node, ctx: ts.TransformationContext): node is t
     }
   }
 
-  if (ts.isArrowFunction(node)) {
+  if (ts.isArrowFunction(node) || ts.isFunctionExpression(node)) {
     if (getLeadingComments(node)?.some(comment => comment.includes(LOADABLE_COMMENT))) {
       removeMatchingLeadingComments(node, ctx, /\#__LOADABLE__/g);
       return true;
     }
 
-    return false;
-  }
-
-  if (ts.isFunctionExpression(node)) {
-    console.log(node.getFullText());
-    console.log(node.kind);
     return false;
   }
 
@@ -143,7 +137,7 @@ export function loadableTransformer(ctx: ts.TransformationContext) {
         ]);
       }
 
-      if (ts.isArrowFunction(node)) {
+      if (ts.isArrowFunction(node) || ts.isFunctionExpression(node)) {
         return obj;
       }
 
