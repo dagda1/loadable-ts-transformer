@@ -34,9 +34,9 @@ exports[`transformer Magic comment should remove only needed comments 1`] = `
     },
     resolve() {
         if (require.resolveWeak) {
-            return require.resolveWeak(\\"'moment'\\");
+            return require.resolveWeak(/* webpackChunkName: \\"moment\\" */ 'moment');
         }
-        return eval(\\"require.resolve\\")(\\"'moment'\\");
+        return eval(\\"require.resolve\\")(/* webpackChunkName: \\"moment\\" */ 'moment');
     }
 };
 "
@@ -76,9 +76,9 @@ exports[`transformer Magic comment should transpile arrow functions 1`] = `
     },
     resolve() {
         if (require.resolveWeak) {
-            return require.resolveWeak(\\"'moment'\\");
+            return require.resolveWeak(/* webpackChunkName: \\"moment\\" */ 'moment');
         }
-        return eval(\\"require.resolve\\")(\\"'moment'\\");
+        return eval(\\"require.resolve\\")(/* webpackChunkName: \\"moment\\" */ 'moment');
     }
 };
 "
@@ -120,9 +120,9 @@ exports[`transformer Magic comment should transpile function expression 1`] = `
     },
     resolve() {
         if (require.resolveWeak) {
-            return require.resolveWeak(\\"'moment'\\");
+            return require.resolveWeak(/* webpackChunkName: \\"moment\\" */ 'moment');
         }
-        return eval(\\"require.resolve\\")(\\"'moment'\\");
+        return eval(\\"require.resolve\\")(/* webpackChunkName: \\"moment\\" */ 'moment');
     }
 };
 "
@@ -164,9 +164,9 @@ exports[`transformer Magic comment should transpile shortand properties 1`] = `
     },
     resolve() {
         if (require.resolveWeak) {
-            return require.resolveWeak(\\"'moment'\\");
+            return require.resolveWeak(/* webpackChunkName: \\"moment\\" */ 'moment');
         }
-        return eval(\\"require.resolve\\")(\\"'moment'\\");
+        return eval(\\"require.resolve\\")(/* webpackChunkName: \\"moment\\" */ 'moment');
     }
 };
 "
@@ -416,9 +416,9 @@ exports[`transformer loadable.lib should be transpiled too 1`] = `
     },
     resolve() {
         if (require.resolveWeak) {
-            return require.resolveWeak(\\"'moment'\\");
+            return require.resolveWeak(/* webpackChunkName: \\"moment\\" */ 'moment');
         }
-        return eval(\\"require.resolve\\")(\\"'moment'\\");
+        return eval(\\"require.resolve\\")(/* webpackChunkName: \\"moment\\" */ 'moment');
     }
 });
 "
@@ -458,9 +458,9 @@ exports[`transformer simple import in a complex promise should work 1`] = `
     },
     resolve() {
         if (require.resolveWeak) {
-            return require.resolveWeak(\\"'./ModA'\\");
+            return require.resolveWeak(/* webpackChunkName: \\"ModA\\" */ './ModA');
         }
-        return eval(\\"require.resolve\\")(\\"'./ModA'\\");
+        return eval(\\"require.resolve\\")(/* webpackChunkName: \\"ModA\\" */ './ModA');
     }
 });
 "
@@ -500,9 +500,9 @@ exports[`transformer simple import should transform path into "chunk-friendly" n
     },
     resolve() {
         if (require.resolveWeak) {
-            return require.resolveWeak(\\"'../foo/bar'\\");
+            return require.resolveWeak(/* webpackChunkName: \\"foo-bar\\" */ '../foo/bar');
         }
-        return eval(\\"require.resolve\\")(\\"'../foo/bar'\\");
+        return eval(\\"require.resolve\\")(/* webpackChunkName: \\"foo-bar\\" */ '../foo/bar');
     }
 });
 "
@@ -668,9 +668,9 @@ exports[`transformer simple import with "webpackChunkName" comment should use it
     },
     resolve() {
         if (require.resolveWeak) {
-            return require.resolveWeak(\\"'./ModA'\\");
+            return require.resolveWeak(/* webpackChunkName: \\"ChunkA\\" */ './ModA');
         }
-        return eval(\\"require.resolve\\")(\\"'./ModA'\\");
+        return eval(\\"require.resolve\\")(/* webpackChunkName: \\"ChunkA\\" */ './ModA');
     }
 });
 "
@@ -710,9 +710,9 @@ exports[`transformer simple import with "webpackChunkName" comment should use it
     },
     resolve() {
         if (require.resolveWeak) {
-            return require.resolveWeak(\\"'./ModA'\\");
+            return require.resolveWeak(/* webpackPrefetch: true, webpackChunkName: \\"ChunkA\\" */ './ModA');
         }
-        return eval(\\"require.resolve\\")(\\"'./ModA'\\");
+        return eval(\\"require.resolve\\")(/* webpackPrefetch: true, webpackChunkName: \\"ChunkA\\" */ './ModA');
     }
 });
 "
@@ -752,9 +752,9 @@ exports[`transformer simple import without "webpackChunkName" comment should add
     },
     resolve() {
         if (require.resolveWeak) {
-            return require.resolveWeak(\\"'./ModA'\\");
+            return require.resolveWeak(/* webpackChunkName: \\"ModA\\" */ './ModA');
         }
-        return eval(\\"require.resolve\\")(\\"'./ModA'\\");
+        return eval(\\"require.resolve\\")(/* webpackChunkName: \\"ModA\\" */ './ModA');
     }
 });
 "

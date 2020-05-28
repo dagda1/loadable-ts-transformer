@@ -1,13 +1,9 @@
-import ts from 'typescript';
+import ts, { SyntaxKind } from 'typescript';
 import { getImportArg, createObjectMethod } from '../util';
 import { CreatePropertyOptions } from './types';
 
 function getCallValue(importArg: ts.Expression) {
-  if (ts.isTemplateExpression(importArg)) {
-    return importArg;
-  }
-
-  if (ts.isBinaryExpression(importArg)) {
+  if ([SyntaxKind.TemplateExpression, SyntaxKind.BinaryExpression, SyntaxKind.StringLiteral].includes(importArg.kind)) {
     return importArg;
   }
 
